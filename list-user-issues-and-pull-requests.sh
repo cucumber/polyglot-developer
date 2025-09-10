@@ -46,5 +46,5 @@ QUERY_TEMPLATE='
 '
 
 QUERY=$(echo "$QUERY_TEMPLATE" | sed "s/GITHUB_USER/$GITHUB_USER/" | sed "s/UPDATED_SINCE/$UPDATED_SINCE/") 
-echo "createdAt, updatedAt, title, url"
-gh api graphql -f query="$QUERY" | jq -r '.data.search.edges[].node | .createdAt[0:10] + ", " + .updatedAt[0:10] + ", \"" + .title + "\", " + .url'
+echo "createdAt,updatedAt,title,url"
+gh api graphql -f query="$QUERY" | jq -r '.data.search.edges[].node | .createdAt[0:10] + "," + .updatedAt[0:10] + ",\"" + (.title | gsub("\"";"\"\"")) + "\"," + .url'
