@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ##
-# Lists all issues created by a github user, updated since a given date
+# Lists the last 100 issues and pull requests created by a github user, updated since a given date
 #
 # Usage:
 #
@@ -12,18 +12,19 @@
 
 set -e
 
-if [ -z "$2" ]
+if [ -z "$3" ]
 then
-  echo "usage: $0 <user> <yyy-mm-dd>"
+  echo "usage: $0 <org> <user> <yyyy-mm-dd>"
   exit 1
 fi
 
-GITHUB_USER=$1
-UPDATED_SINCE=$2
+GITHUB_ORG=$1
+GITHUB_USER=$2
+UPDATED_SINCE=$3
 
 QUERY_TEMPLATE='
 {
-  search(query: "org:cucumber author:GITHUB_USER  updated:>=UPDATED_SINCE sort:created-desc ", type: ISSUE, last: 100) {
+  search(query: "org:GITHUB_ORG author:GITHUB_USER  updated:>=UPDATED_SINCE sort:created-desc ", type: ISSUE, last: 100) {
     edges {
       node {
         ... on PullRequest {
@@ -45,6 +46,6 @@ QUERY_TEMPLATE='
 }
 '
 
-QUERY=$(echo "$QUERY_TEMPLATE" | sed "s/GITHUB_USER/$GITHUB_USER/" | sed "s/UPDATED_SINCE/$UPDATED_SINCE/") 
+QUERY=$(echo "$QUERY_TEMPLATE" |  sed "s/GITHUB_ORG/$GITHUB_ORG/" | sed "s/GITHUB_USER/$GITHUB_USER/" | sed "s/UPDATED_SINCE/$UPDATED_SINCE/") 
 echo "createdAt,updatedAt,title,url"
 gh api graphql -f query="$QUERY" | jq -r '.data.search.edges[].node | .createdAt[0:10] + "," + .updatedAt[0:10] + ",\"" + (.title | gsub("\"";"\"\"")) + "\"," + .url'
