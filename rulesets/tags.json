@@ -1,0 +1,37 @@
+{
+  "id": 15005235,
+  "name": "tags",
+  "target": "tag",
+  "source_type": "Repository",
+  "source": "cucumber/pretty-formatter",
+  "enforcement": "active",
+  "conditions": {
+    "ref_name": {
+      "exclude": [],
+      "include": [
+        "refs/tags/v*"
+      ]
+    }
+  },
+  "rules": [
+    {
+      "type": "deletion"
+    },
+    {
+      "type": "non_fast_forward"
+    },
+    {
+      "type": "creation"
+    },
+    {
+      "type": "update"
+    }
+  ],
+  "bypass_actors": [
+    {
+      "actor_id": 5227827,
+      "actor_type": "Team",
+      "bypass_mode": "always"
+    }
+  ]
+}
